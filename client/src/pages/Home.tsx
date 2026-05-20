@@ -6,6 +6,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { Menu } from "lucide-react";
+import { useLocation } from "wouter";
 import { categories } from "@/lib/optionsData";
 import { useOptions } from "@/hooks/useOptions";
 import CategoryCard from "@/components/CategoryCard";
@@ -18,6 +19,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
+  const [, navigate] = useLocation();
+
   const {
     selectedItems,
     grandTotal,
@@ -207,6 +210,14 @@ export default function Home() {
                 </span>
               </div>
             )}
+            {/* 管理者ページリンク（小さく） */}
+            <button
+              type="button"
+              onClick={() => navigate("/admin")}
+              className="hidden sm:flex items-center gap-1 text-[11px] text-muted-foreground/50 hover:text-muted-foreground transition-colors px-2 py-1 rounded"
+            >
+              管理者
+            </button>
           </div>
         </header>
 
