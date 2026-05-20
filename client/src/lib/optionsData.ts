@@ -175,6 +175,41 @@ export const categories: Category[] = [
       { id: "car-002", name: "リクシル 55×55 二台用 積雪150cm対応", price: 843000, unit: "fixed", categoryId: "carport" },
     ],
   },
+  {
+    id: "hvac",
+    name: "空調オプション",
+    icon: "❄️",
+    items: [
+      { id: "hva-001", name: '全館空調「マーベックス」', price: 1200000, unit: "fixed", categoryId: "hvac" },
+    ],
+  },
+  {
+    id: "lighting",
+    name: "照明オプション",
+    icon: "💡",
+    items: [
+      { id: "lit-001", name: "玄関框下間接照明 W900", price: 9000, unit: "fixed", categoryId: "lighting" },
+      { id: "lit-002", name: "玄関框下間接照明 W1200", price: 11000, unit: "fixed", categoryId: "lighting" },
+      { id: "lit-003", name: "トイレ背面収納間接照明", price: 20000, unit: "fixed", categoryId: "lighting" },
+    ],
+  },
+  {
+    id: "application",
+    name: "申請オプション",
+    icon: "📋",
+    items: [
+      { id: "app-001", name: "長期優良住宅申請", price: 600000, unit: "fixed", categoryId: "application" },
+    ],
+  },
+  {
+    id: "sash",
+    name: "サッシオプション",
+    icon: "🪟",
+    items: [
+      { id: "sas-001", name: "LDK掃き出し窓サイズアップ①（W2600×H2070）", price: 56000, unit: "fixed", categoryId: "sash" },
+      { id: "sas-002", name: "LDK掃き出し窓サイズアップ②（W1640×H2470）", price: 33000, unit: "fixed", categoryId: "sash" },
+    ],
+  },
 ];
 
 // ─── ユーティリティ関数 ──────────────────────────────────────────────────────
