@@ -1,0 +1,35 @@
+{
+  "build_command": "pnpm run build",
+  "capabilities": [],
+  "dev_command": "pnpm run dev",
+  "env_vars": {},
+  "experiments": null,
+  "git_remote": {
+    "repo_url": "s3://vida-prod-gitrepo/webdev-git/310519663401708209/MwGokLPPG6CyrynjdfHTKj",
+    "access_key_id": "ASIAZV3A2ECZDIDJQ7FP",
+    "secret_access_key": "tdVD+BoMGRk/jYCQzQ0sRx2dmAr8yE99zjd3Sn0B",
+    "session_token": "IQoJb3JpZ2luX2VjEB8aCXVzLWVhc3QtMSJHMEUCIQCbj7PcdHlMORl5CDhn9KxhDK3oX3k0ynPB0+stBMgCpAIgWENzYOuaB6BWhvKE+POdQlTwHAKhikG2egFRx3lLjFQq/wMI6P//////////ARAEGgw2NjUzODYwOTg4NjYiDDnu3xhsIQ2MyJYCUCrTA3pyf93/V2TdJnGMKf4xYbvCaUfO3HtZGtxWHbmGprFVODY8nEOSq8ymeqTfaIxQVNCBkDIpr3sPCVO+NIeILy33MGUrU6n7X6X7MqQdJAsAaJTKhka/YFClj92vHkt/rc7VFmDG5oTA3mYt6QjvthG+E2J4T6u5ToGHeN1rv7n6B6SSyLi+DSPZ5wmj73D0hOrwY5/hflewIPWVDHkkmmTfZ7d1UGFWMTYTBl22DKjMlRo3biv8dMEBvZxY65pQsZ3ukWl0MGRU0HSipY9VVeekQucUpS/QFCR7shbMBfLM0+l2my7uFX+zL5tpV/H+QE9s9moCQZF+zpLwBFSbJFEF9NsORCV1UDSYcPMAVbF5LUD3/y+waRCgW741mvEpeSdj0YNM4c0OwrUGjsZtlmQkYE+rlmn/BeeQDSf2s5ZCgg6Au2VHQS68HMoQXbVxS7qOKwgaviRG+hvEmohw/Ltji7NhMhKCv8+Ev64H3teif8xEuBDc25SKQaX4a3xL8OzgYTdSu6xTDk0ZJd0XhWq6Qi0twWUBtHgffHkbD5fS845MOdvuCK0XyigDeJTQBHjpzGhrr3zEmvnSGzt/GrKw7dmlwSekLQyUH3IhIhIkNQaQMOintdAGOp0B9AltXjF/pt1SWjoXDp0FhmbVe9UsjkIgfrCjb9ul3oTta1+oeasWfAUXl+pLDsLFI0TuvZTV8CHyoNLVsvocKZgLznYNi+yY6+WRewfCu5JySoMuYMGvQlSJpTe0Y3LwaLKdJxMy6rhUnu6QoL9LxluGj/0hr3jd+XGtfpCU/feROfCCvsOUXEtup7VgbXmMTG9SMrm0tATMqCB9KQ==",
+    "expiration": "2026-05-20T18:25:44.000Z"
+  },
+  "name": "housing-options-app",
+  "path": "/home/ubuntu/housing-options-app",
+  "port": 3000,
+  "secrets": {
+    "BUILT_IN_FORGE_API_KEY": "eZHnUjrd4rJkPzyUtbxDnJ",
+    "BUILT_IN_FORGE_API_URL": "https://forge.manus.ai",
+    "JWT_SECRET": "PmpGDKcLvtR2MQQrmihHec",
+    "OAUTH_SERVER_URL": "https://api.manus.im",
+    "OWNER_NAME": "大樹 櫻田",
+    "OWNER_OPEN_ID": "UDHDKcAo7ubQMdd6sMV2vS",
+    "VITE_ANALYTICS_ENDPOINT": "https://manus-analytics.com",
+    "VITE_ANALYTICS_WEBSITE_ID": "4d374d54-a759-454a-b95a-5efa005f1650",
+    "VITE_APP_ID": "MwGokLPPG6CyrynjdfHTKj",
+    "VITE_APP_LOGO": "",
+    "VITE_APP_TITLE": "住宅オプション選択アプリ",
+    "VITE_FRONTEND_FORGE_API_KEY": "kMJJL9ZAyz38rkq7QmooSD",
+    "VITE_FRONTEND_FORGE_API_URL": "https://forge.manus.ai",
+    "VITE_OAUTH_PORTAL_URL": "https://manus.im"
+  },
+  "template_id": "web-static",
+  "test_command": "pnpm test"
+}
