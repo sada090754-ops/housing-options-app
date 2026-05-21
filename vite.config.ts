@@ -203,9 +203,19 @@ function vitePluginStorageProxy(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
+const isProduction = process.env.NODE_ENV === "production";
+
+const plugins = [
+  react(),
+  tailwindcss(),
+  !isProduction && jsxLocPlugin(),
+  !isProduction && vitePluginManusRuntime(),
+  vitePluginManusDebugCollector(),
+  vitePluginStorageProxy(),
+].filter(Boolean) as Plugin[];
 
 export default defineConfig({
+  base: process.env.GITHUB_PAGES === "true" ? "/housing-options-app/" : "/",
   plugins,
   resolve: {
     alias: {
