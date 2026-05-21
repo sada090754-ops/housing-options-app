@@ -3,10 +3,12 @@ import {
   ArrowLeft,
   Download,
   FileUp,
+  FolderPlus,
   LogOut,
   RotateCcw,
   Save,
   Search,
+  Trash2,
   X,
 } from "lucide-react";
 import { useLocation } from "wouter";
@@ -59,6 +61,17 @@ function flattenCategories(categories: EditableCategory[]) {
   );
 }
 
+function createCategoryId(existingCategories: EditableCategory[]): string {
+  const existingIds = new Set(existingCategories.map((category) => category.id));
+  let index = existingCategories.length + 1;
+  let nextId = `custom-category-${index}`;
+  while (existingIds.has(nextId)) {
+    index += 1;
+    nextId = `custom-category-${index}`;
+  }
+  return nextId;
+}
+
 export default function Admin() {
   const [, navigate] = useLocation();
   const { editableCategories, setEditableCategories } = useEditableCategories();
@@ -89,6 +102,41 @@ export default function Admin() {
     return { sellingTotal, costTotal, profitTotal, marginRate };
   }, [filteredRows]);
 
+  const updateCategory = (
+    categoryId: string,
+    updater: (category: EditableCategory) => EditableCategory
+  ) => {
+    setEditableCategories((previous) =>
+      previous.map((category) => (category.id === categoryId ? updater(category) : category))
+    );
+  };
+
+  const addCategory = () => {
+    const nextId = createCategoryId(editableCategories);
+    const nextCategory: EditableCategory = {
+      id: nextId,
+      name: "新しいカテゴリー",
+      icon: "📁",
+      items: [],
+    };
+    setEditableCategories((previous) => [...previous, nextCategory]);
+    setSelectedCategory(nextId);
+    toast.success("カテゴリーを追加しました");
+  };
+
+  const removeCategory = (categoryId: string) => {
+    const category = editableCategories.find((current) => current.id === categoryId);
+    if (!category) return;
+    if (category.items.length > 0) {
+      toast.error("オプションが入っているカテゴリーは削除できません。先に別カテゴリーへ移動してください。");
+      return;
+    }
+    if (!window.confirm(`「${category.name}」を削除しますか？`)) return;
+    setEditableCategories((previous) => previous.filter((current) => current.id !== categoryId));
+    if (selectedCategory === categoryId) setSelectedCategory("all");
+    toast.success("カテゴリーを削除しました");
+  };
+
   const updateItem = (
     categoryId: string,
     itemId: string,
@@ -104,6 +152,31 @@ export default function Admin() {
             }
       )
     );
+  };
+
+  const moveItemToCategory = (fromCategoryId: string, itemId: string, toCategoryId: string) => {
+    if (fromCategoryId === toCategoryId) return;
+    setEditableCategories((previous) => {
+      const sourceCategory = previous.find((category) => category.id === fromCategoryId);
+      const itemToMove = sourceCategory?.items.find((item) => item.id === itemId);
+      if (!itemToMove || !previous.some((category) => category.id === toCategoryId)) return previous;
+
+      return previous.map((category) => {
+        if (category.id === fromCategoryId) {
+          return {
+            ...category,
+            items: category.items.filter((item) => item.id !== itemId),
+          };
+        }
+        if (category.id === toCategoryId) {
+          return {
+            ...category,
+            items: [...category.items, { ...itemToMove, categoryId: toCategoryId }],
+          };
+        }
+        return category;
+      });
+    });
   };
 
   const handleExportJson = () => {
@@ -124,6 +197,7 @@ export default function Admin() {
         throw new Error("categories が見つかりません");
       }
       setEditableCategories(importedCategories);
+      setSelectedCategory("all");
       toast.success("JSONからデータを読み込みました");
     } catch (error) {
       toast.error(`JSONの読み込みに失敗しました: ${String(error)}`);
@@ -138,6 +212,7 @@ export default function Admin() {
     }
     clearEditableCategories();
     setEditableCategories(createDefaultEditableCategories());
+    setSelectedCategory("all");
     toast.success("初期データに戻しました");
   };
 
@@ -164,7 +239,7 @@ export default function Admin() {
           <div>
             <h1 className="text-[16px] sm:text-[18px] font-bold tracking-tight">オプション管理</h1>
             <p className="hidden sm:block text-[11px] text-gray-500 mt-0.5">
-              オプション名・数量・販売価格・原価を編集し、JSONとして保存できます。
+              カテゴリー、オプション名、数量、販売価格、原価を編集し、JSONとして保存できます。
             </p>
           </div>
 
@@ -278,6 +353,70 @@ export default function Admin() {
           </div>
         </section>
 
+        <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm mb-4">
+          <div className="px-4 py-3 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 className="text-[14px] font-bold">カテゴリー管理</h2>
+              <p className="text-[11px] text-gray-500 mt-0.5">
+                表示名とアイコンを編集できます。新規カテゴリーを追加し、下の編集テーブルで各オプションを移動できます。
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={addCategory}
+              className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-gray-950 px-3 text-[12px] font-semibold text-white hover:bg-gray-800 transition-colors"
+            >
+              <FolderPlus className="w-3.5 h-3.5" />
+              カテゴリー追加
+            </button>
+          </div>
+
+          <div className="grid gap-3 p-4 md:grid-cols-2 xl:grid-cols-3">
+            {editableCategories.map((category) => (
+              <div key={category.id} className="rounded-xl border border-gray-200 bg-gray-50/60 p-3">
+                <div className="flex items-start gap-2">
+                  <label className="block w-16 shrink-0">
+                    <span className="block text-[10px] font-semibold text-gray-500 mb-1">アイコン</span>
+                    <input
+                      type="text"
+                      value={category.icon}
+                      maxLength={4}
+                      onChange={(event) =>
+                        updateCategory(category.id, (current) => ({ ...current, icon: event.target.value }))
+                      }
+                      className="w-full h-9 rounded-lg border border-gray-200 px-2 text-center text-[15px] focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900"
+                    />
+                  </label>
+                  <label className="block flex-1 min-w-0">
+                    <span className="block text-[10px] font-semibold text-gray-500 mb-1">カテゴリー名</span>
+                    <input
+                      type="text"
+                      value={category.name}
+                      onChange={(event) =>
+                        updateCategory(category.id, (current) => ({ ...current, name: event.target.value }))
+                      }
+                      className="w-full h-9 rounded-lg border border-gray-200 px-3 text-[13px] font-semibold focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => removeCategory(category.id)}
+                    className="mt-5 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-red-200 bg-white text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    disabled={category.items.length > 0}
+                    title={category.items.length > 0 ? "オプションが入っているカテゴリーは削除できません" : "カテゴリーを削除"}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+                <div className="mt-2 flex items-center justify-between text-[11px] text-gray-500">
+                  <span>ID: {category.id}</span>
+                  <span>{category.items.length}件</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
           <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
             <div>
@@ -294,7 +433,7 @@ export default function Admin() {
             <table className="w-full text-[13px]">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200 text-gray-600">
-                  <th className="text-left px-4 py-3 font-semibold w-44">カテゴリ</th>
+                  <th className="text-left px-4 py-3 font-semibold min-w-[220px]">カテゴリ</th>
                   <th className="text-left px-4 py-3 font-semibold min-w-[300px]">オプション名</th>
                   <th className="text-center px-3 py-3 font-semibold w-24">単位</th>
                   <th className="text-right px-3 py-3 font-semibold w-28">数量</th>
@@ -309,7 +448,19 @@ export default function Admin() {
                   const margin = sellingTotal > 0 ? profitTotal / sellingTotal : 0;
                   return (
                     <tr key={item.id} className={cn("border-b border-gray-100", index % 2 === 0 ? "bg-white" : "bg-gray-50/40")}>
-                      <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{category.icon} {category.name}</td>
+                      <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                        <select
+                          value={category.id}
+                          onChange={(event) => moveItemToCategory(category.id, item.id, event.target.value)}
+                          className="w-full h-9 rounded-lg border border-gray-200 bg-white px-2 text-[12px] focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900"
+                        >
+                          {editableCategories.map((optionCategory) => (
+                            <option key={optionCategory.id} value={optionCategory.id}>
+                              {optionCategory.icon} {optionCategory.name}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
                       <td className="px-4 py-3">
                         <input
                           type="text"
@@ -357,16 +508,31 @@ export default function Admin() {
               return (
                 <div key={item.id} className="p-4 space-y-3">
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-[11px] text-gray-500">{category.icon} {category.name} / {unitLabels[item.unit]}</p>
-                      <input
-                        type="text"
-                        value={item.name}
-                        onChange={(event) =>
-                          updateItem(category.id, item.id, (current) => ({ ...current, name: event.target.value }))
-                        }
-                        className="mt-2 w-full h-9 rounded-lg border border-gray-200 px-3 text-[13px] font-semibold focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900"
-                      />
+                    <div className="w-full">
+                      <p className="text-[11px] text-gray-500 mb-2">{unitLabels[item.unit]}</p>
+                      <Field label="カテゴリー">
+                        <select
+                          value={category.id}
+                          onChange={(event) => moveItemToCategory(category.id, item.id, event.target.value)}
+                          className="w-full h-9 rounded-lg border border-gray-200 bg-white px-2 text-[12px] focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900"
+                        >
+                          {editableCategories.map((optionCategory) => (
+                            <option key={optionCategory.id} value={optionCategory.id}>
+                              {optionCategory.icon} {optionCategory.name}
+                            </option>
+                          ))}
+                        </select>
+                      </Field>
+                      <Field label="オプション名">
+                        <input
+                          type="text"
+                          value={item.name}
+                          onChange={(event) =>
+                            updateItem(category.id, item.id, (current) => ({ ...current, name: event.target.value }))
+                          }
+                          className="w-full h-9 rounded-lg border border-gray-200 px-3 text-[13px] font-semibold focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900"
+                        />
+                      </Field>
                     </div>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
