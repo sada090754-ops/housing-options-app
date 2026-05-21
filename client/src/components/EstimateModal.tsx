@@ -5,8 +5,7 @@
 
 import { useRef } from "react";
 import { X, Printer, Share2 } from "lucide-react";
-import { formatPrice } from "@/lib/optionsData";
-import { categories } from "@/lib/optionsData";
+import { formatPrice, type Category } from "@/lib/optionsData";
 import { cn } from "@/lib/utils";
 
 interface SelectedEntry {
@@ -16,6 +15,7 @@ interface SelectedEntry {
 }
 
 interface EstimateModalProps {
+  categories: Category[];
   open: boolean;
   onClose: () => void;
   selectedItems: SelectedEntry[];
@@ -25,11 +25,12 @@ interface EstimateModalProps {
 }
 
 export default function EstimateModal({
+  categories,
   open,
   onClose,
   selectedItems,
   grandTotal,
-  categoryTotals,
+  categoryTotals: _categoryTotals,
   onShareLINE,
 }: EstimateModalProps) {
   const printRef = useRef<HTMLDivElement>(null);

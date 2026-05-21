@@ -4,10 +4,11 @@
 // =============================================================================
 
 import { Heart } from "lucide-react";
-import { categories, formatPrice } from "@/lib/optionsData";
+import { formatPrice, type Category } from "@/lib/optionsData";
 import { cn } from "@/lib/utils";
 
 interface SidebarNavProps {
+  categories: Category[];
   activeCategory: string | null;
   categoryCounts: Record<string, number>;
   categoryTotals: Record<string, number>;
@@ -19,6 +20,7 @@ interface SidebarNavProps {
 }
 
 export default function SidebarNav({
+  categories,
   activeCategory,
   categoryCounts,
   categoryTotals,

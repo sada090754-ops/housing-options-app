@@ -4,12 +4,7 @@
 // =============================================================================
 
 import { useState, useCallback, useEffect, useMemo } from "react";
-import {
-  categories,
-  OptionItem,
-  calcItemTotal,
-  getItemById,
-} from "@/lib/optionsData";
+import { type Category, type OptionItem, calcItemTotal } from "@/lib/optionsData";
 
 export interface SelectionState {
   [itemId: string]: {
@@ -38,7 +33,7 @@ function saveToStorage(state: SelectionState) {
   }
 }
 
-export function useOptions() {
+export function useOptions(categories: Category[]) {
   const [selection, setSelection] = useState<SelectionState>(loadFromStorage);
   const [favorites, setFavorites] = useState<Set<string>>(() => {
     try {
@@ -104,17 +99,21 @@ export function useOptions() {
     setSelection({});
   }, []);
 
+  const itemsById = useMemo(() => {
+    return new Map(categories.flatMap((category) => category.items).map((item) => [item.id, item]));
+  }, [categories]);
+
   // 選択済みアイテム一覧
   const selectedItems = useMemo(() => {
     return Object.entries(selection)
       .filter(([, v]) => v.selected)
       .map(([itemId, v]) => {
-        const item = getItemById(itemId);
+        const item = itemsById.get(itemId);
         if (!item) return null;
         return { item, quantity: v.quantity, total: calcItemTotal(item, v.quantity) };
       })
       .filter(Boolean) as { item: OptionItem; quantity: number; total: number }[];
-  }, [selection]);
+  }, [selection, itemsById]);
 
   // カテゴリ別小計
   const categoryTotals = useMemo(() => {

@@ -6,9 +6,8 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { Menu } from "lucide-react";
-import { useLocation } from "wouter";
-import { categories } from "@/lib/optionsData";
 import { useOptions } from "@/hooks/useOptions";
+import { useEditableCategories } from "@/hooks/useEditableCategories";
 import CategoryCard from "@/components/CategoryCard";
 import TotalPanel from "@/components/TotalPanel";
 import SearchBar from "@/components/SearchBar";
@@ -19,7 +18,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
-  const [, navigate] = useLocation();
+  const { customerCategories: categories } = useEditableCategories();
 
   const {
     selectedItems,
@@ -34,7 +33,7 @@ export default function Home() {
     setQuantity,
     clearAll,
     favorites,
-  } = useOptions();
+  } = useOptions(categories);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showFavorites, setShowFavorites] = useState(false);
@@ -67,7 +66,7 @@ export default function Home() {
         ),
       }))
       .filter((cat) => cat.items.length > 0);
-  }, [searchQuery, showFavorites, favorites]);
+  }, [categories, searchQuery, showFavorites, favorites]);
 
   // カテゴリへスクロール
   const handleSelectCategory = useCallback((catId: string) => {
@@ -131,6 +130,7 @@ export default function Home() {
       <aside className="hidden lg:flex w-[220px] xl:w-[240px] flex-shrink-0 h-screen sticky top-0">
         <div className="w-full overflow-hidden">
           <SidebarNav
+            categories={categories}
             activeCategory={activeCategory}
             categoryCounts={categoryCounts}
             categoryTotals={categoryTotals}
@@ -155,6 +155,7 @@ export default function Home() {
           />
           <div className="relative w-[260px] h-full">
             <SidebarNav
+              categories={categories}
               activeCategory={activeCategory}
               categoryCounts={categoryCounts}
               categoryTotals={categoryTotals}
@@ -210,14 +211,7 @@ export default function Home() {
                 </span>
               </div>
             )}
-            {/* 管理者ページリンク（小さく） */}
-            <button
-              type="button"
-              onClick={() => navigate("/admin")}
-              className="hidden sm:flex items-center gap-1 text-[11px] text-muted-foreground/50 hover:text-muted-foreground transition-colors px-2 py-1 rounded"
-            >
-              管理者
-            </button>
+
           </div>
         </header>
 
@@ -292,6 +286,7 @@ export default function Home() {
           <aside className="hidden lg:block w-[280px] xl:w-[300px] flex-shrink-0 h-screen sticky top-14 overflow-y-auto">
             <div className="p-4 pt-5">
               <TotalPanel
+                categories={categories}
                 selectedItems={selectedItems}
                 grandTotal={grandTotal}
                 categoryTotals={categoryTotals}
@@ -315,6 +310,7 @@ export default function Home() {
 
       {/* ── 見積書モーダル ── */}
       <EstimateModal
+        categories={categories}
         open={estimateOpen}
         onClose={() => setEstimateOpen(false)}
         selectedItems={selectedItems}

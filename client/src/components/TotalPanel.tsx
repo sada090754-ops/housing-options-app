@@ -5,8 +5,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FileText, Share2, Trash2, ChevronDown, ChevronUp } from "lucide-react";
-import { formatPrice } from "@/lib/optionsData";
-import { categories } from "@/lib/optionsData";
+import { formatPrice, type Category } from "@/lib/optionsData";
 import { cn } from "@/lib/utils";
 
 interface SelectedEntry {
@@ -16,6 +15,7 @@ interface SelectedEntry {
 }
 
 interface TotalPanelProps {
+  categories: Category[];
   selectedItems: SelectedEntry[];
   grandTotal: number;
   categoryTotals: Record<string, number>;
@@ -55,6 +55,7 @@ function useCountUp(target: number, duration = 400) {
 }
 
 export default function TotalPanel({
+  categories,
   selectedItems,
   grandTotal,
   categoryTotals,
